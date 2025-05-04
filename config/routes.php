@@ -21,8 +21,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use Cake\Routing\Route\DashedRoute;
-use Cake\Routing\RouteBuilder;
+ use Cake\Routing\Route\DashedRoute;
+ use Cake\Routing\RouteBuilder;
 
 /*
  * This file is loaded in the context of the `Application` class.
@@ -55,12 +55,16 @@ return function (RouteBuilder $routes): void {
          * its action called 'display', and we pass a param to select the view file
          * to use (in this case, templates/Pages/home.php)...
          */
-        $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+        $builder->connect('/', ['controller' => 'Login', 'action' => 'index']);
+
 
         /*
          * ...and connect the rest of 'Pages' controller's URLs.
          */
-        $builder->connect('/pages/*', 'Pages::display');
+
+        //$builder->connect('/pages/*', 'Pages::display');
+
+        
 
         /*
          * Connect catchall routes for all controllers.
@@ -93,4 +97,28 @@ return function (RouteBuilder $routes): void {
      * });
      * ```
      */
+    $routes->prefix('Admin', function (RouteBuilder $builder) {
+        $builder->setRouteClass(DashedRoute::class);
+    
+        // Route /admin to DashboardController
+        $builder->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
+    
+        $builder->fallbacks(DashedRoute::class);
+    });
+
+    $routes->prefix('Admin', function (RouteBuilder $builder) {
+        $builder->connect('/borrowed', ['controller' => 'Dashboard', 'action' => 'borrowed']);
+        $builder->fallbacks(DashedRoute::class);
+    });
+
+    $routes->connect('/register', ['controller' => 'Register', 'action' => 'index']);
+
+    $routes->connect('/home', ['controller' => 'Pages', 'action' => 'home']);
+
+    $routes->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
+
+    $routes->prefix('Admin', function (RouteBuilder $builder) {
+        $builder->connect('/items-status', ['controller' => 'Dashboard', 'action' => 'itemsStatus']);
+        $builder->fallbacks(DashedRoute::class);
+    });
 };

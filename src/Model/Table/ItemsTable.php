@@ -23,17 +23,17 @@ class ItemsTable extends Table
     {
         parent::initialize($config);
 
-        // Define the database table name
         $this->setTable('items');
-        
-        // Set the display field (used when calling `find('list')`)
+        $this->setPrimaryKey('id');
         $this->setDisplayField('name');
 
-        // Define the primary key column
-        $this->setPrimaryKey('id');
-
-        // Enable Timestamp behavior (auto-fills 'created' and 'modified' fields)
         $this->addBehavior('Timestamp');
+
+        // ✅ An Item can have many Borrowings
+        $this->hasMany('Borrowings', [
+            'foreignKey' => 'item_id',
+            'dependent' => true,
+        ]);
     }
 
     /**
@@ -59,6 +59,10 @@ class ItemsTable extends Table
             ->requirePresence('quantity', 'create') // Required when creating a new item
             ->notEmptyString('quantity', 'Quantity is required') // Cannot be empty
             ->greaterThanOrEqual('quantity', 0, 'Quantity must be a positive number'); // Prevent negative values
+
+         $validator
+            ->integer('quantity')
+            ->greaterThanOrEqual('quantity', 0, 'Quantity cannot be negative.');
 
         return $validator;
     }
